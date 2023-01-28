@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView , DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView , DetailView, DeleteView
 
 
 from .forms import AddLeadForm
@@ -15,7 +16,6 @@ from team.models import Team
 
 class LeadListView(ListView):
     model=Lead
-    
     @method_decorator(login_required)
     def dispatch(self,*args,**kwargs):
         return super().dispatch(*args,**kwargs)
@@ -35,7 +35,6 @@ class LeadListView(ListView):
 
 class LeadDetailView(DetailView):
     model = Lead
-
     @method_decorator(login_required)
     def dispatch(self,*args,**kwargs):
         return super().dispatch(*args,**kwargs)
@@ -43,6 +42,7 @@ class LeadDetailView(DetailView):
     def get_queryset(self):
         queryset = super(LeadDetailView,self).get_queryset()
         return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
+
 
 
 # @login_required
@@ -54,6 +54,25 @@ class LeadDetailView(DetailView):
 #     })
 
 
+class LeadDeleteView(DeleteView):
+        model = Lead
+        success_url = reverse_lazy('leads:list')
+        @method_decorator(login_required)
+        def dispatch(self,*args,**kwargs):
+            return super().dispatch(*args,**kwargs)
+        def get_queryset(self):
+            queryset = super(LeadDeleteView,self).get_queryset()
+            return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
+        def get(self,request,*args,**kwargs):
+            return self.post(request,*args,**kwargs)
+
+# @login_required
+# def leads_delete(request,pk):
+#     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
+#     lead.delete()
+#     messages.success(request,'The lead was deleted')
+
+#     return  redirect('leads:list')
 
 @login_required
 def add_lead(request):
@@ -96,13 +115,7 @@ def leads_edit(request,pk):
 
 
 
-@login_required
-def leads_delete(request,pk):
-    lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
-    lead.delete()
-    messages.success(request,'The lead was deleted')
 
-    return  redirect('leads:list')
 
 @login_required
 def convert_to_client(request,pk):
