@@ -12,5 +12,5 @@ urlpatterns = [
     path('<int:pk>/delete/', views.LeadDeleteView.as_view(), name='delete'),
     path('<int:pk>/edit/', views.LeadUpdateView.as_view(),name='edit'),
     path('<int:pk>/convert/', views.convert_to_client, name="convert"),
-    path('add-lead/', views.add_lead , name ='add_lead'),
+    path('add-lead/', views.LeadCreateView.as_view() , name ='add'),
 ]

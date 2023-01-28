@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.views.generic import ListView , DetailView, DeleteView,UpdateView
+from django.views.generic import ListView , DetailView, DeleteView,UpdateView,CreateView
 
 
 from .forms import AddLeadForm
@@ -78,14 +78,18 @@ class LeadDeleteView(DeleteView):
 class LeadUpdateView(UpdateView):
     model = Lead
     fields = ('name', 'email', 'description', 'priority', 'status')
+    success_url = reverse_lazy('leads:list')
     @method_decorator(login_required)
     def dispatch(self,*args,**kwargs):
         return super().dispatch(*args,**kwargs)
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Lead'
+        return context
     def get_queryset(self):
         queryset = super(LeadUpdateView,self).get_queryset()
         return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
-    def get_success_url(self):
-        return reverse_lazy('leads:list')
+ 
 
 # @login_required()
 # def leads_edit(request,pk):
@@ -103,25 +107,46 @@ class LeadUpdateView(UpdateView):
 #         })
 
 
-@login_required
-def add_lead(request):
-    team = Team.objects.filter(created_by=request.user)[0]
-    if request.method == 'POST':
-        form = AddLeadForm(request.POST)
-        if form.is_valid():
-            team = Team.objects.filter(created_by=request.user)[0]
-            lead = form.save(commit=False)
-            lead.created_by = request.user
-            lead.team= team
-            lead.save()
-            messages.success(request, 'The lead was Created')
-            return redirect('leads:list')
-    else:
-        form = AddLeadForm()
-    return render(request, 'lead/add_lead.html', {
-        'form': form,
-        'team':team
-    })
+class LeadCreateView(CreateView):
+    model = Lead
+    fields = ('name', 'email', 'description', 'priority', 'status')
+    success_url = reverse_lazy('leads:list')
+    @method_decorator(login_required)
+    def dispatch(self,*args,**kwargs):
+        return super().dispatch(*args,**kwargs)
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        team = Team.objects.filter(created_by=self.request.user)[0]
+        context['team'] = team
+        context['title'] = 'Add Lead'
+        return context
+    def form_valid(self,form):
+        team = Team.objects.filter(created_by=self.request.user)[0]
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.team = team
+        self.object.save()
+        return redirect(self.get_success_url())
+
+# @login_required
+# def add_lead(request):
+#     team = Team.objects.filter(created_by=request.user)[0]
+#     if request.method == 'POST':
+#         form = AddLeadForm(request.POST)
+#         if form.is_valid():
+#             team = Team.objects.filter(created_by=request.user)[0]
+#             lead = form.save(commit=False)
+#             lead.created_by = request.user
+#             lead.team= team
+#             lead.save()
+#             messages.success(request, 'The lead was Created')
+#             return redirect('leads:list')
+#     else:
+#         form = AddLeadForm()
+#     return render(request, 'lead/add_lead.html', {
+#         'form': form,
+#         'team':team
+#     })
 
 
 

@@ -1,13 +1,13 @@
 {% extends 'core/base.html' %}
 
-{% block title %} {{ lead.name }} {% endblock %}
+{% block title %}  {{ lead.name }} {% endblock %}
 
 {% block content %}
     <div class="py-6 px-6">
         <h1 class="mb-4 text-xl">{{ lead.name }}</h1>
 
         {% if lead.description %}
-            <p class=" font-semibold">Name</p>
+            <p class=" font-semibold">description</p>
             <p class="mb-2">{{ lead.description }}</p>
 
         {% endif %}
