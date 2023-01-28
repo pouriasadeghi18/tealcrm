@@ -7,6 +7,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link rel="stylesheet" href="{% static 'main.min.css' %}">
+        <style>
+
+            input {
+                border: 2px solid #ccc;
+                margin:5px;
+                background-color: #f8f8f8;
+                border-radius: 4px;
+              }
+              textarea {
+                width: 100%;
+                height: 150px;
+                padding: 12px 20px;
+                box-sizing: border-box;
+                border: 2px solid #ccc;
+                border-radius: 4px;
+                background-color: #f8f8f8;
+                font-size: 16px;
+                resize: none;
+              }
+              select {
+                background-color: #ccc;
+                border: 2px solid #ccc;
+                margin:5px;
+                font-family: Arial;
+              }
+
+             
+        </style>
 
         <title>{% block title %}{% endblock %}</title>
     </head>
