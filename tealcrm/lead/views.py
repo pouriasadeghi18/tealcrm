@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.views.generic import ListView , DetailView, DeleteView
+from django.views.generic import ListView , DetailView, DeleteView,UpdateView
 
 
 from .forms import AddLeadForm
@@ -71,8 +71,37 @@ class LeadDeleteView(DeleteView):
 #     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
 #     lead.delete()
 #     messages.success(request,'The lead was deleted')
-
 #     return  redirect('leads:list')
+
+
+
+class LeadUpdateView(UpdateView):
+    model = Lead
+    fields = ('name', 'email', 'description', 'priority', 'status')
+    @method_decorator(login_required)
+    def dispatch(self,*args,**kwargs):
+        return super().dispatch(*args,**kwargs)
+    def get_queryset(self):
+        queryset = super(LeadUpdateView,self).get_queryset()
+        return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
+    def get_success_url(self):
+        return reverse_lazy('leads:list')
+
+# @login_required()
+# def leads_edit(request,pk):
+#     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
+#     if request.method == 'POST':
+#         form = AddLeadForm(request.POST,instance=lead)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'The lead was Edeting')
+#             return redirect('leads:list')
+#     else:
+#         form = AddLeadForm(instance=lead)
+#         return render(request, 'lead/leads_edit.html', {
+#             'form': form
+#         })
+
 
 @login_required
 def add_lead(request):
@@ -98,20 +127,7 @@ def add_lead(request):
 
 
     
-@login_required()
-def leads_edit(request,pk):
-    lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
-    if request.method == 'POST':
-        form = AddLeadForm(request.POST,instance=lead)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'The lead was Edeting')
-            return redirect('leads:list')
-    else:
-        form = AddLeadForm(instance=lead)
-        return render(request, 'lead/leads_edit.html', {
-            'form': form
-        })
+
 
 
 
