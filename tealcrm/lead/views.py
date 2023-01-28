@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.views.generic import ListView , DetailView, DeleteView,UpdateView,CreateView
+from django.views.generic import ListView , DetailView, DeleteView,UpdateView,CreateView,View
 
 
 from .forms import AddLeadForm
@@ -151,15 +151,9 @@ class LeadCreateView(CreateView):
 
 
 
-    
-
-
-
-
-
-
-@login_required
-def convert_to_client(request,pk):
+class ConvertToClientView(View):
+    def get(self,request,*args,**kwargs):
+        pk = self.kwargs.get('pk')
         lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
         team = Team.objects.filter(created_by=request.user)[0]
         client = Client.objects.create(
@@ -169,8 +163,30 @@ def convert_to_client(request,pk):
             created_by=request.user,
             team = team
         )
-
         lead.covert_to_client = True
         lead.save()
         messages.success(request,'The lead was converted to client')
         return redirect('leads:list')
+
+
+
+
+
+
+
+# @login_required
+# def convert_to_client(request,pk):
+#         lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
+#         team = Team.objects.filter(created_by=request.user)[0]
+#         client = Client.objects.create(
+#             name=lead.name,
+#             email=lead.email,
+#             description=lead.description,
+#             created_by=request.user,
+#             team = team
+#         )
+
+#         lead.covert_to_client = True
+#         lead.save()
+#         messages.success(request,'The lead was converted to client')
+#         return redirect('leads:list')
