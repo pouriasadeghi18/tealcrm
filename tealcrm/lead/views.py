@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView
+from django.views.generic import ListView , DetailView
 
 
 from .forms import AddLeadForm
@@ -25,12 +25,34 @@ class LeadListView(ListView):
         return queryset.filter(created_by=self.request.user,covert_to_client = False)
          
 
+
 # @login_required
 # def leads_list(request):
 #     leads = Lead.objects.filter(created_by=request.user, )
 #     return render(request, 'lead/leads_list.html', {
 #         'leads': leads
 #     })
+
+class LeadDetailView(DetailView):
+    model = Lead
+
+    @method_decorator(login_required)
+    def dispatch(self,*args,**kwargs):
+        return super().dispatch(*args,**kwargs)
+
+    def get_queryset(self):
+        queryset = super(LeadDetailView,self).get_queryset()
+        return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
+
+
+# @login_required
+# def leads_detail(request,pk):
+#     lead = get_object_or_404(Lead,created_by=request.user,pk=pk)
+#     # lead = Lead.objects.filter(created_by=request.user).get(pk=pk)
+#     return render(request,'lead/leads_detail.html',{
+#         'lead':lead
+#     })
+
 
 
 @login_required
@@ -52,6 +74,11 @@ def add_lead(request):
         'form': form,
         'team':team
     })
+
+
+
+
+    
 @login_required()
 def leads_edit(request,pk):
     lead = get_object_or_404(Lead, created_by=request.user, pk=pk)
@@ -67,13 +94,7 @@ def leads_edit(request,pk):
             'form': form
         })
 
-@login_required
-def leads_detail(request,pk):
-    lead = get_object_or_404(Lead,created_by=request.user,pk=pk)
-    # lead = Lead.objects.filter(created_by=request.user).get(pk=pk)
-    return render(request,'lead/leads_detail.html',{
-        'lead':lead
-    })
+
 
 @login_required
 def leads_delete(request,pk):
