@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.views.generic import ListView , DetailView, DeleteView,UpdateView,CreateView,View
+from .forms import AddCommentForm
 
 
 from .forms import AddLeadForm
@@ -38,7 +39,10 @@ class LeadDetailView(DetailView):
     @method_decorator(login_required)
     def dispatch(self,*args,**kwargs):
         return super().dispatch(*args,**kwargs)
-
+    def get_context_data(self,**kwargs):
+            context = super().get_context_data(**kwargs)
+            context['form'] = AddCommentForm()
+            return context
     def get_queryset(self):
         queryset = super(LeadDetailView,self).get_queryset()
         return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
@@ -54,12 +58,27 @@ class LeadDetailView(DetailView):
 #     })
 
 
+class AddCommentView(View):
+    def post(self,request,*args,**kwargs):
+        pk = kwargs.get('pk')
+        form = AddCommentForm(request.POST)
+        if form.is_valid():
+            team = Team.objects.filter(created_by=self.request.user)[0]
+            comment = form.save(commit=False)
+            comment.team = team
+            comment.created_by = request.user
+            comment.lead_id = pk
+            comment.save()
+        return redirect('leads:detail',pk=pk)
+
 class LeadDeleteView(DeleteView):
         model = Lead
         success_url = reverse_lazy('leads:list')
         @method_decorator(login_required)
         def dispatch(self,*args,**kwargs):
             return super().dispatch(*args,**kwargs)
+
+        
         def get_queryset(self):
             queryset = super(LeadDeleteView,self).get_queryset()
             return queryset.filter(created_by=self.request.user,pk=self.kwargs.get('pk') )
