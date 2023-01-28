@@ -1,0 +1,11 @@
+{
+    "python.linting.pydocstyleEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.pylintEnabled": false,
+    "python.linting.lintOnSave": false,
+    "python.linting.maxNumberOfProblems": 50,
+    "python.linting.pylamaEnabled": false,
+    
+    
+}
