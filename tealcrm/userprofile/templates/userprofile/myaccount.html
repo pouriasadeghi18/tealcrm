@@ -13,11 +13,11 @@
         <p class="mb-2 ">
             <strong>Team: </strong>{{team.name}}
             {% if team.created_by == request.user %}
-                <a href="{% url 'edit_team' team.id %}">(Edit)  </a>
+                <a href="{% url 'team:edit' team.id %}">(Edit)  </a>
             {% endif %}
         </p>
 
         <hr class ="mb-4">
-        <a href="{% url 'logout' %}" class=" inline-block text-white py-4 px-6 mx-2 rounded-xl bg-red-600"> Logout </a>
+        <a href="{% url 'logout' %}" class=" inline-block text-white py-4 px-6 mx-2 rounded-xl bg-orange-600" style="background-color: red;"> Logout </a>
     </div>
 {% endblock %}

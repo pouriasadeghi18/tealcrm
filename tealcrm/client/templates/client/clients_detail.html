@@ -24,11 +24,11 @@
 
         <hr class="my-4">
            
-            <a href="{% url 'clients_edit' client.id %}" class="py-2 px-4 rounded-xl text-white bg-teal-500">Edit</a>
-            <a href="{% url 'clients_delete' client.id %}" class="py-2 px-4 rounded-xl text-white bg-red-500" >Delete</a>
+            <a href="{% url 'clients:edit' client.id %}" class="py-2 px-4 rounded-xl text-white bg-teal-500">Edit</a>
+            <a href="{% url 'clients:delete' client.id %}" class="py-2 px-4 rounded-xl text-white bg-red-500" >Delete</a>
         <hr class="my-4">
 
-        <a href="{% url 'clients_list' %}">Back to clients</a>
+        <a href="{% url 'clients:list' %}">Back to clients</a>
     </div>
 
  {% endblock %}   
