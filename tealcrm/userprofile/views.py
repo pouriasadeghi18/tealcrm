@@ -24,7 +24,6 @@ def signup(request):
 
 
 
-
 @login_required
 def myaccount(request):
     team = Team.objects.filter(created_by=request.user)[0]

@@ -90,3 +90,32 @@ local_settings.py
 
 .env
 db.sqlite3
+
+
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+
+# dependencies
+/node_modules
+tealcrm/node_modules
+/bower_components
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log*
+yarn-error.log
+testem.log
+
+# ember-try
+.node_modules.ember-try/
+bower.json.ember-try
+package.json.ember-try
+tealcrm/package.json.ember-try
+tealcrm/bower.json.ember-try
+tealcrm/.node_modules.ember-try/
