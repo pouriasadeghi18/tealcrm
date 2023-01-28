@@ -1,17 +1,36 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView
+
+
 from .forms import AddLeadForm
 from .models import Lead
+
+
 from client.models import Client
 from team.models import Team
 
-@login_required
-def leads_list(request):
-    leads = Lead.objects.filter(created_by=request.user, covert_to_client = False)
-    return render(request, 'lead/leads_list.html', {
-        'leads': leads
-    })
+
+class LeadListView(ListView):
+    model=Lead
+    
+    @method_decorator(login_required)
+    def dispatch(self,*args,**kwargs):
+        return super().dispatch(*args,**kwargs)
+
+    def get_queryset(self):
+        queryset = super(LeadListView,self).get_queryset()
+        return queryset.filter(created_by=self.request.user,covert_to_client = False)
+         
+
+# @login_required
+# def leads_list(request):
+#     leads = Lead.objects.filter(created_by=request.user, )
+#     return render(request, 'lead/leads_list.html', {
+#         'leads': leads
+#     })
 
 
 @login_required
